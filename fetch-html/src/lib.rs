@@ -1,21 +1,20 @@
 use suborbital::runnable::*;
 
-struct HelloWorld {}
+struct FetchHtml{}
 
-impl Runnable for HelloWorld {
+impl Runnable for FetchHtml {
     fn run(&self, input: Vec<u8>) -> Result<Vec<u8>, RunErr> {
         let in_string = String::from_utf8(input).unwrap();
-
-        Ok(String::from(format!("hello {}", in_string))
-            .as_bytes()
-            .to_vec())
+    
+        Ok(String::from(format!("hello {}", in_string)).as_bytes().to_vec())
     }
 }
 
+
 // initialize the runner, do not edit below //
-static RUNNABLE: &HelloWorld = &HelloWorld {};
+static RUNNABLE: &FetchHtml = &FetchHtml{};
 
 #[no_mangle]
-pub extern "C" fn init() {
+pub extern fn init() {
     use_runnable(RUNNABLE);
 }

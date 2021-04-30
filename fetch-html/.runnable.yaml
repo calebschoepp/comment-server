@@ -1,4 +1,4 @@
-name: helloworld
+name: fetch-html
 namespace: default
 lang: rust
 apiVersion: 0.9.1

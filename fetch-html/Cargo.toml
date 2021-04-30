@@ -1,5 +1,5 @@
 [package]
-name = "helloworld"
+name = "fetch-html"
 version = "0.1.0"
 authors = ["Suborbital Runnable <info@suborbital.dev>"]
 edition = "2018"
