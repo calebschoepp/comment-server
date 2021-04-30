@@ -1,0 +1,4 @@
+name: helloworld
+namespace: default
+lang: rust
+apiVersion: 0.9.1
