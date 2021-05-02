@@ -2,10 +2,9 @@ use base64;
 use suborbital::req::*;
 use suborbital::runnable::*;
 use urlencoding;
+struct ValidateUrl {}
 
-struct Validate {}
-
-impl Runnable for Validate {
+impl Runnable for ValidateUrl {
     fn run(&self, _: Vec<u8>) -> Result<Vec<u8>, RunErr> {
         // Setup
         let valid_platforms: Vec<Platform> = vec![
@@ -31,17 +30,18 @@ impl Runnable for Validate {
             Err(err) => return Err(RunErr::new(1, &err.to_string())), // TODO return more meaningful error code
         };
 
-        // Validate parameters
+        // Validate url
         if let false = valid_platforms
             .iter()
             .any(|p| platform == p.name && url.contains(p.domain))
         {
-            return Err(RunErr::new(1, "Provided platform or url is invalid")); // TODO return more meaningful error code
+            return Err(RunErr::new(
+                1,
+                "Provided url is invalid or does not match platform",
+            )); // TODO return more meaningful error code
         }
 
-        Ok(String::from(format!("{},{}", platform, url))
-            .as_bytes()
-            .to_vec())
+        Ok(String::from(format!("{}", url)).as_bytes().to_vec())
     }
 }
 
@@ -51,7 +51,7 @@ struct Platform {
 }
 
 // initialize the runner, do not edit below //
-static RUNNABLE: &Validate = &Validate {};
+static RUNNABLE: &ValidateUrl = &ValidateUrl {};
 
 #[no_mangle]
 pub extern "C" fn init() {

@@ -19,7 +19,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c9232eb53352b4442e40d7900465dfc534e8cb2dc8f18656fcb2ac16112b5593"
 
 [[package]]
-name = "validate"
+name = "validate-url"
 version = "0.1.0"
 dependencies = [
  "base64",
