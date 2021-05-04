@@ -1,6 +1,7 @@
 use serde_json::Value;
 use std::collections::BTreeMap;
 use suborbital::http;
+use suborbital::log;
 use suborbital::req;
 use suborbital::runnable::*;
 
@@ -17,6 +18,7 @@ impl Runnable for CountComments {
             None => return Err(RunErr::new(500, "No platform found in state")),
         };
 
+        log::info(&format!("Counting comments at url: {}", url));
         let count = match platform.as_str() {
             "reddit" => count_reddit_comments(url),
             "hackernews" => count_hackernews_comments(url),
