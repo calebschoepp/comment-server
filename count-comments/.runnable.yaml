@@ -1,4 +1,4 @@
-name: parse
+name: count-comments
 namespace: default
 lang: rust
 apiVersion: 0.9.1

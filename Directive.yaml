@@ -12,8 +12,7 @@ handlers:
           as: platform
         - fn: validate-url
           as: url
-      - fn: fetch-html
-        as: html
-      - fn: parse
+      - fn: count-comments
 
-# Add error handling logic
+# TODO Add error handling logic
+# TODO add logging throughout project
