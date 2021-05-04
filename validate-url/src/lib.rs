@@ -5,8 +5,6 @@ use urlencoding;
 
 struct ValidateUrl {}
 
-const ERR_CODE: i32 = 2; // Globally unique error code for the runnable
-
 impl Runnable for ValidateUrl {
     fn run(&self, _: Vec<u8>) -> Result<Vec<u8>, RunErr> {
         // Setup
@@ -26,11 +24,21 @@ impl Runnable for ValidateUrl {
         let url = url_param("url");
         let url = match base64::decode(url) {
             Ok(bytes) => String::from_utf8_lossy(&bytes).into_owned(),
-            Err(err) => return Err(RunErr::new(ERR_CODE, &err.to_string())),
+            Err(err) => {
+                return Err(RunErr::new(
+                    400,
+                    &format!("Error base64 decoding: {}", err.to_string()),
+                ))
+            }
         };
         let url = match urlencoding::decode(&url) {
             Ok(decoded_url) => decoded_url,
-            Err(err) => return Err(RunErr::new(ERR_CODE, &err.to_string())),
+            Err(err) => {
+                return Err(RunErr::new(
+                    400,
+                    &format!("Error url decoding: {}", err.to_string()),
+                ))
+            }
         };
 
         // Validate url
@@ -39,7 +47,7 @@ impl Runnable for ValidateUrl {
             .any(|p| platform == p.name && url.contains(p.domain))
         {
             return Err(RunErr::new(
-                ERR_CODE,
+                400,
                 "Provided url is invalid or does not match platform",
             ));
         }
