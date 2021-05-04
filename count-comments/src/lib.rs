@@ -1,11 +1,12 @@
 use serde_json::Value;
 use std::collections::BTreeMap;
-use suborbital::http;
-use suborbital::log;
-use suborbital::req;
+use std::convert::TryInto;
 use suborbital::runnable::*;
+use suborbital::{cache, http, log, req};
 
 struct CountComments {}
+
+const TTL: i32 = 1800; // 30 minutes
 
 impl Runnable for CountComments {
     fn run(&self, _: Vec<u8>) -> Result<Vec<u8>, RunErr> {
@@ -17,14 +18,25 @@ impl Runnable for CountComments {
             Some(platform) => platform,
             None => return Err(RunErr::new(500, "No platform found in state")),
         };
+        let cache_key = platform.clone() + ":" + &url;
+        log::info(&format!("Getting comments at url: {}", url));
 
-        log::info(&format!("Counting comments at url: {}", url));
+        // Cache hit
+        if let Ok(cached_count) = cache::get(&cache_key) {
+            let slice: &[u8] = &cached_count;
+            let slice = slice.try_into().expect("Cached value to be u64");
+            return Ok(String::from(format!("{}", u64::from_be_bytes(slice)))
+                .as_bytes()
+                .to_vec());
+        }
+
+        // Cache miss
         let count = match platform.as_str() {
             "reddit" => count_reddit_comments(url),
             "hackernews" => count_hackernews_comments(url),
             _ => Err(RunErr::new(400, "Invalid platform")),
         }?;
-
+        cache::set(&cache_key, count.to_be_bytes().to_vec(), TTL);
         Ok(String::from(format!("{}", count)).as_bytes().to_vec())
     }
 }
