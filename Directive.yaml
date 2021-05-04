@@ -13,6 +13,3 @@ handlers:
         - fn: validate-url
           as: url
       - fn: count-comments
-
-# TODO Add error handling logic
-# TODO add logging throughout project
