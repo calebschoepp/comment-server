@@ -1,1 +1,3 @@
 target
+runnables.wasm.zip
+*.wasm
