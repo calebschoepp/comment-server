@@ -1,4 +1,4 @@
-# comment-server
+# comment-service
 
 A service to count comments on social media platforms. I use it on my blog to have a dynamic comment count on my blog posts.
 

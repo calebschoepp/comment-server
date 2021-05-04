@@ -47,7 +47,7 @@ fn count_reddit_comments(url: String) -> Result<u64, RunErr> {
 
     // Parse comment count from response
     let mut headers = BTreeMap::new();
-    headers.insert("User-Agent", "comment-server");
+    headers.insert("User-Agent", "comment-service");
     let bytes = match http::get(&url, Some(headers)) {
         Ok(bytes) => bytes,
         Err(err) => return Err(err),
