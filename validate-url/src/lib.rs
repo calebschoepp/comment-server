@@ -2,7 +2,10 @@ use base64;
 use suborbital::req::*;
 use suborbital::runnable::*;
 use urlencoding;
+
 struct ValidateUrl {}
+
+const ERR_CODE: i32 = 2; // Globally unique error code for the runnable
 
 impl Runnable for ValidateUrl {
     fn run(&self, _: Vec<u8>) -> Result<Vec<u8>, RunErr> {
@@ -23,11 +26,11 @@ impl Runnable for ValidateUrl {
         let url = url_param("url");
         let url = match base64::decode(url) {
             Ok(bytes) => String::from_utf8_lossy(&bytes).into_owned(),
-            Err(err) => return Err(RunErr::new(1, &err.to_string())), // TODO return more meaningful error code
+            Err(err) => return Err(RunErr::new(ERR_CODE, &err.to_string())),
         };
         let url = match urlencoding::decode(&url) {
             Ok(decoded_url) => decoded_url,
-            Err(err) => return Err(RunErr::new(1, &err.to_string())), // TODO return more meaningful error code
+            Err(err) => return Err(RunErr::new(ERR_CODE, &err.to_string())),
         };
 
         // Validate url
@@ -36,9 +39,9 @@ impl Runnable for ValidateUrl {
             .any(|p| platform == p.name && url.contains(p.domain))
         {
             return Err(RunErr::new(
-                1,
+                ERR_CODE,
                 "Provided url is invalid or does not match platform",
-            )); // TODO return more meaningful error code
+            ));
         }
 
         Ok(String::from(format!("{}", url)).as_bytes().to_vec())

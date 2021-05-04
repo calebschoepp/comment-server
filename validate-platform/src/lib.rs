@@ -3,6 +3,8 @@ use suborbital::runnable::*;
 
 struct ValidatePlatform {}
 
+const ERR_CODE: i32 = 1; // Globally unique error code for the runnable
+
 impl Runnable for ValidatePlatform {
     fn run(&self, _: Vec<u8>) -> Result<Vec<u8>, RunErr> {
         // Read url parameters
@@ -10,7 +12,7 @@ impl Runnable for ValidatePlatform {
 
         // Validate platform
         if let false = vec!["reddit", "hackernews"].iter().any(|p| platform == *p) {
-            return Err(RunErr::new(1, "Provided platform is invalid")); // TODO return more meaningful error code
+            return Err(RunErr::new(ERR_CODE, "Provided platform is invalid"));
         }
 
         Ok(String::from(format!("{}", platform)).as_bytes().to_vec())
