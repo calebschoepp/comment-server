@@ -46,8 +46,3 @@ heroku container:push web
 
 heroku container:release web
 ```
-
-# TODO
-
-- Testing
-- Integration
