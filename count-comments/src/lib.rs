@@ -2,7 +2,7 @@ use serde_json::Value;
 use std::collections::BTreeMap;
 use std::convert::TryInto;
 use suborbital::runnable::*;
-use suborbital::{cache, http, log, req};
+use suborbital::{cache, http, log, req, resp};
 
 struct CountComments {}
 
@@ -10,6 +10,7 @@ const TTL: i32 = 1800; // 30 minutes
 
 impl Runnable for CountComments {
     fn run(&self, _: Vec<u8>) -> Result<Vec<u8>, RunErr> {
+        // Setup
         let url = match req::state("url") {
             Some(url) => url,
             None => return Err(RunErr::new(500, "No url found in state")),
@@ -20,6 +21,9 @@ impl Runnable for CountComments {
         };
         let cache_key = platform.clone() + ":" + &url;
         log::info(&format!("Getting comments at url: {}", url));
+
+        // Set cross-origin
+        resp::set_header("Access-Control-Allow-Origin", "*");
 
         // Cache hit
         if let Ok(cached_count) = cache::get(&cache_key) {
